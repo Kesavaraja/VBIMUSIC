@@ -1,3 +1,11 @@
+# The app has been deployed in Netlify. Link is mentioned below.
+
+
+
+Open [https://infallible-bassi-8a1b83.netlify.app/](this link) to view it in your browser.
+
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

@@ -12,7 +12,7 @@ class SongCard extends React.Component {
                         <p className='card-text'>Album: {song.albumName}</p>
                     </div>
                     <div className='card-bottom'>
-                        <span onClick={this.props.addTo}> + Add to playlist</span>
+                        <span > + Add to playlist</span>
                     </div>
                 </div>
             )

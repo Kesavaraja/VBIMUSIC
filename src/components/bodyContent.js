@@ -7,6 +7,7 @@ import LazyLoad from 'react-lazyload';
 import SongCard from './songCard';
 import ReactPaginate from 'react-paginate';
 import { isValidData } from '../Assets/js/common';
+import Accordion from 'react-bootstrap/Accordion';
 
 class BodyContent extends React.Component {
     constructor(props) {
@@ -110,7 +111,12 @@ class BodyContent extends React.Component {
 
     renderPlaylist(playlist) {
         return (
-            <li>{playlist.name}</li>
+            <Accordion.Item eventKey={playlist.name}>
+                <Accordion.Header>{playlist.name}</Accordion.Header>
+                <Accordion.Body>
+                    Answer to the Question #1
+                </Accordion.Body>
+            </Accordion.Item>
         )
     }
 
@@ -187,25 +193,6 @@ class BodyContent extends React.Component {
 
         return (
             <div className='row' style={{ height: '100%', width: '100%' }}>
-                <div className="modal" id="playlistModal" tabIndex="-1" role="dialog">
-                    <div className="modal-dialog" role="document">
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h5 className="modal-title">Modal title</h5>
-                                <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div className="modal-body">
-                                <p>Modal body text goes here.</p>
-                            </div>
-                            <div className="modal-footer">
-                                <button type="button" className="btn btn-primary">Save changes</button>
-                                <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 <div className="container-fluid" style={{ height: '100%', width: '100%' }}>
 
                     <div className='row' style={{ backgroundImage: this.state.bgImage, height: "100%" }}>
@@ -218,20 +205,23 @@ class BodyContent extends React.Component {
                                 <h4>User playlist</h4><br />
                                 {
                                     isValidData(this.state.userPlaylist) ?
-                                        <ul>
-
+                                        <Accordion defaultActiveKey="0" flush>
                                             {
                                                 this.state.userPlaylist.map(this.renderPlaylist)}
-                                            <li>
-                                                <input type="text" placeholder='+ Create new' value={this.state.newPlaylistName} onChange={this.setPlaylistName} name="newPlaylistName" />
-                                                <span className='btn btn-primary' onClick={() => this.createNewPlaylist()}>Create</span>
-                                            </li>
-
-                                        </ul>
+                                            <Accordion.Item eventKey="0">
+                                                <Accordion.Header><input type="text" placeholder='+ Create new' value={this.state.newPlaylistName} onChange={this.setPlaylistName} name="newPlaylistName" />
+                                                    <span className='btn btn-primary' onClick={() => this.createNewPlaylist()}>Create</span>
+                                                </Accordion.Header>
+                                            </Accordion.Item>
+                                        </Accordion>
                                         :
-                                        <ul>
-                                            <li><input type="text" placeholder='+ Create new' value={this.state.newPlaylistName} name="newPlaylistName" onChange={this.setPlaylistName} /><span className='btn btn-primary' onClick={() => this.createNewPlaylist()}>Create</span></li>
-                                        </ul>
+                                        <Accordion defaultActiveKey="0" flush>
+                                            <Accordion.Item eventKey="0">
+                                                <Accordion.Header><input type="text" placeholder='+ Create new' value={this.state.newPlaylistName} onChange={this.setPlaylistName} name="newPlaylistName" />
+                                                    <span className='btn btn-primary' onClick={() => this.createNewPlaylist()}>Create</span>
+                                                </Accordion.Header>
+                                            </Accordion.Item>
+                                        </Accordion >
                                 }
                                 <hr />
                                 <h4>Albums</h4>
@@ -249,10 +239,10 @@ class BodyContent extends React.Component {
                             {this.pagination()}
                             <div style={{ height: "800px", overflow: "auto" }}>
                                 <LazyLoad height={200} once>
-                                    <div className='row'>
+                                    <div className='row card-deck'>
                                         {
                                             isValidData(this.state.finalRenderData) ?
-                                                <SongCard songs={this.state.finalRenderData} pageCount={this.state.pageCount} startPoint={this.state.itemOffset} />
+                                                <SongCard songs={this.state.finalRenderData} playlists={this.state.userPlaylist} pageCount={this.state.pageCount} startPoint={this.state.itemOffset} />
                                                 : "No data"
                                         }
                                     </div>

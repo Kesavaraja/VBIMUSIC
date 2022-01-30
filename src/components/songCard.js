@@ -26,7 +26,6 @@ class SongCard extends React.Component {
     }
 
     card(song) {
-        console.log("data:", this.state.showPlaylists, this.props.playlists)
         if (song) {
             return (
                 <div key={song.id} className='col-2 card'>

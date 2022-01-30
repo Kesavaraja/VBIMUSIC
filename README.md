@@ -2,7 +2,7 @@
 
 
 
-Open [https://infallible-bassi-8a1b83.netlify.app/](this link) to view it in your browser.
+Open [this link](https://infallible-bassi-8a1b83.netlify.app/) to view it in your browser.
 
 
 

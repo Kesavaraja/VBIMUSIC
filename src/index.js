@@ -4,6 +4,7 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import '@popperjs/core'
 import 'bootstrap/dist/js/bootstrap.bundle';
 import configureStore from './configureStore';
 

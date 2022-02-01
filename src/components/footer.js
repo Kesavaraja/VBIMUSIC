@@ -7,7 +7,15 @@ class Footer extends React.Component {
         return (
             <div className='footer'>
                 <div className='text-center'>Copyright VBI Music.</div>
-                <ToastContainer />
+                <ToastContainer position="top-center"
+                    autoClose={3000}
+                    hideProgressBar={false}
+                    newestOnTop={false}
+                    closeOnClick
+                    rtl={false}
+                    pauseOnFocusLoss
+                    draggable
+                    pauseOnHover />
             </div>
 
         )

@@ -6,8 +6,10 @@ import { getLocalStorage, setLocalStorage } from '../scripts/getSetLocalStrorage
 import LazyLoad from 'react-lazyload';
 import SongCard from './songCard';
 import ReactPaginate from 'react-paginate';
-import { isValidData } from '../Assets/js/common';
+import { DATEFORMAT, isValidData, shuffle } from '../Assets/js/common';
 import Accordion from 'react-bootstrap/Accordion';
+import dateFormat from "dateformat";
+import Header from './header';
 
 class BodyContent extends React.Component {
     constructor(props) {
@@ -17,7 +19,7 @@ class BodyContent extends React.Component {
             pageCount: 24,
             selectedAlbum: null,
             selectedSong: null,
-            userPlaylist: getLocalStorage("playlist") ? JSON.parse(getLocalStorage("playlist")) : setLocalStorage("playlist", JSON.stringify([{ id: "Favourites", name: "Favourites", songsIds: [] }])),
+            userPlaylist: getLocalStorage("playlist") ? JSON.parse(getLocalStorage("playlist")) : setLocalStorage("playlist", JSON.stringify([{ id: "Favourites", name: "Favourites", songs: [] }])),
             bgImage: _bgImage,
             albumList: null,
             songList: null,
@@ -39,6 +41,9 @@ class BodyContent extends React.Component {
         this.filterSongs = this.filterSongs.bind(this);
         this.searchData = this.searchData.bind(this);
         this.paginateResult = this.paginateResult.bind(this);
+        this.renderPlaylist = this.renderPlaylist.bind(this);
+        this.updatePlaylistToParent = this.updatePlaylistToParent.bind(this);
+        this.shuffleChoosenPlaylist = this.shuffleChoosenPlaylist.bind(this);
     }
 
     getAlbums() {
@@ -54,7 +59,7 @@ class BodyContent extends React.Component {
 
     pagination() {
         return (
-            <div className='col-6 col-offset-3'>
+            <div className='col-12 text-center'>
                 <ReactPaginate
                     breakLabel="..."
                     nextLabel="next >"
@@ -77,7 +82,7 @@ class BodyContent extends React.Component {
         var allSongs = this.state.songsWithAlbums
         var searchedResult = []
         for (var songIndex = 0; songIndex < allSongs.length; songIndex++) {
-            if (allSongs[songIndex].title.includes(searchedSongOrAlbum) || allSongs[songIndex].albumName.includes(searchedSongOrAlbum))
+            if (allSongs[songIndex].title.includes(searchedSongOrAlbum.toLowerCase()) || allSongs[songIndex].albumName.includes(searchedSongOrAlbum.toLowerCase()))
                 searchedResult.push(allSongs[songIndex])
         }
         this.setState({
@@ -109,12 +114,43 @@ class BodyContent extends React.Component {
         }, () => this.filterSongs())
     }
 
+    renderPlaylistSongs(song) {
+        return (
+            <div >
+                <h6 className='card-title'>{song.title}</h6>
+                <p className='card-text float-right'>
+                    <p>Added on: {dateFormat(song.dateCreated, DATEFORMAT)}</p>
+                </p>
+                <hr />
+            </div>
+        )
+    }
+
+    shuffleChoosenPlaylist(choosenPlaylist) {
+        choosenPlaylist.songs = shuffle(choosenPlaylist.songs)
+        var allPlaylists = this.state.userPlaylist
+        var indexNumber = allPlaylists.findIndex((item) => item.name === choosenPlaylist.name)
+        console.log("indeNumber:", indexNumber)
+        allPlaylists.splice(indexNumber, 1, choosenPlaylist)
+        this.setState({
+            userPlaylist: allPlaylists
+        })
+    }
+
     renderPlaylist(playlist) {
         return (
             <Accordion.Item eventKey={playlist.name}>
                 <Accordion.Header>{playlist.name}</Accordion.Header>
                 <Accordion.Body>
-                    Answer to the Question #1
+                    {
+                        isValidData(playlist.songs) ?
+                            <div>
+                                {playlist.songs.map(this.renderPlaylistSongs)}
+                                <div className="text-center">
+                                    <span className="btn btn-primary" onClick={() => this.shuffleChoosenPlaylist(playlist)}> <i className="fas fa-random"></i> Shuffle songs</span>
+                                </div>
+                            </div>
+                            : "Add some songs to " + playlist.name}
                 </Accordion.Body>
             </Accordion.Item>
         )
@@ -179,13 +215,21 @@ class BodyContent extends React.Component {
         var data = {
             name: this.state.newPlaylistName,
             id: this.state.newPlaylistName,
-            songsId: []
+            songs: [],
+            dateCreated: Date.parse(new Date())
         }
         existingPlaylist.push(data)
         setLocalStorage("playlist", JSON.stringify(existingPlaylist))
+        toast.success(data.name + " playlist has been created")
         this.setState({
             userPlaylist: existingPlaylist,
             newPlaylistName: ""
+        })
+    }
+
+    updatePlaylistToParent(playlistData) {
+        this.setState({
+            userPlaylist: playlistData
         })
     }
 
@@ -196,36 +240,39 @@ class BodyContent extends React.Component {
                 <div className="container-fluid" style={{ height: '100%', width: '100%' }}>
 
                     <div className='row' style={{ backgroundImage: this.state.bgImage, height: "100%" }}>
-                        <div className='col-3'>
+                        <div className='col-3 container'>
+                            <Header />
+                            <h3>Welcome to VBI Music, Guest</h3>
+                            <hr />
                             <h4>Search</h4><br />
-                            <input type="text" className="" placeholder='Search album or song' onChange={this.searchData} name="searchedSong" value={this.state.searchedSong} />
+                            <div className="input-group">
+                                <input type="text" className="form-control" placeholder='Search album or song' onChange={this.searchData} name="searchedSong" value={this.state.searchedSong} />
+                                <div className='input-group-append'>
+                                    <span className='btn btn-primary' onClick={this.filterSongs}>Search</span>
+                                </div>
+                            </div>
                             <div>
                                 <hr />
 
-                                <h4>User playlist</h4><br />
+                                <h4>User playlist</h4> <hr />
                                 {
                                     isValidData(this.state.userPlaylist) ?
                                         <Accordion defaultActiveKey="0" flush>
-                                            {
-                                                this.state.userPlaylist.map(this.renderPlaylist)}
-                                            <Accordion.Item eventKey="0">
-                                                <Accordion.Header><input type="text" placeholder='+ Create new' value={this.state.newPlaylistName} onChange={this.setPlaylistName} name="newPlaylistName" />
-                                                    <span className='btn btn-primary' onClick={() => this.createNewPlaylist()}>Create</span>
-                                                </Accordion.Header>
-                                            </Accordion.Item>
+                                            {this.state.userPlaylist.map(this.renderPlaylist)}
                                         </Accordion>
                                         :
-                                        <Accordion defaultActiveKey="0" flush>
-                                            <Accordion.Item eventKey="0">
-                                                <Accordion.Header><input type="text" placeholder='+ Create new' value={this.state.newPlaylistName} onChange={this.setPlaylistName} name="newPlaylistName" />
-                                                    <span className='btn btn-primary' onClick={() => this.createNewPlaylist()}>Create</span>
-                                                </Accordion.Header>
-                                            </Accordion.Item>
-                                        </Accordion >
-                                }
+                                        <div>No playlist available</div>
+                                } <hr />
+                                <div className="input-group">
+                                    <input type="text" className='form-control' placeholder='+ Create new playlist' value={this.state.newPlaylistName} onChange={this.setPlaylistName} name="newPlaylistName" />
+                                    <span class="input-group-append">
+                                        <span className='btn btn-primary pull-right' onClick={() => this.createNewPlaylist()}>Create</span>
+                                    </span>
+
+                                </div>
                                 <hr />
                                 <h4>Albums</h4>
-                                <ul style={{ height: "600px", overflow: "auto" }}>
+                                <ul style={{ height: "250px", overflow: "auto" }}>
                                     {
                                         isValidData(this.state.albumList) ?
                                             this.state.albumList.map(this.renderAlbum)
@@ -236,20 +283,22 @@ class BodyContent extends React.Component {
                             </div>
                         </div>
                         <div className='row col-9'>
-                            {this.pagination()}
-                            <div style={{ height: "800px", overflow: "auto" }}>
-                                <LazyLoad height={200} once>
-                                    <div className='row card-deck'>
-                                        {
-                                            isValidData(this.state.finalRenderData) ?
-                                                <SongCard songs={this.state.finalRenderData} playlists={this.state.userPlaylist} pageCount={this.state.pageCount} startPoint={this.state.itemOffset} />
-                                                : "No data"
-                                        }
-                                    </div>
-                                </LazyLoad>
+                            <div className="card">
+                                {this.pagination()}
+                                <div style={{ height: "800px", overflow: "auto" }}>
+                                    <LazyLoad height={200} once>
+                                        <div className='row card-deck'>
+                                            {
+                                                isValidData(this.state.finalRenderData) ?
+                                                    <SongCard songs={this.state.finalRenderData} playlists={this.state.userPlaylist} updateParent={this.updatePlaylistToParent} pageCount={this.state.pageCount} startPoint={this.state.itemOffset} />
+                                                    : "No data"
+                                            }
+                                        </div>
+                                    </LazyLoad>
 
+                                </div>
+                                {this.pagination()}
                             </div>
-                            {this.pagination()}
                         </div>
                     </div>
                 </div>

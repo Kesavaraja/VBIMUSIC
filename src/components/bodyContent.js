@@ -19,7 +19,7 @@ class BodyContent extends React.Component {
             pageCount: 24,
             selectedAlbum: null,
             selectedSong: null,
-            userPlaylist: getLocalStorage("playlist") ? JSON.parse(getLocalStorage("playlist")) : setLocalStorage("playlist", JSON.stringify([{ id: "Favourites", name: "Favourites", songs: [] }])),
+            userPlaylist: getLocalStorage("playlist") ? JSON.parse(getLocalStorage("playlist")) : [],
             bgImage: _bgImage,
             albumList: null,
             songList: null,

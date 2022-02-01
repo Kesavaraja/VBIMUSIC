@@ -19,7 +19,7 @@ Features:
 
 3) Clicking on album name will filter songs from the specific album.
 
-4) Favourites will be the default playlist and user will be allowed to create multiple playlist.
+4) User will be allowed to create multiple playlist.
 
 5) Songs can be added to the playlist from the song list by clicking Add to playlist and selecting the playlist name will add the song to the selected playlist.
 

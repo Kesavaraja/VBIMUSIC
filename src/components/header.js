@@ -5,12 +5,10 @@ class Header extends React.Component {
     render() {
         return (
             <div className='row col-md-12'>
-                <div className='col-8 text-center'>
-                    <img src={logo} height="50px" width="50px" alt="VBI Music" />
-                    <span>VBI Music</span>
-                </div>
-                <div className='col-4 pull-right'>
-                    <span>Welcome, Guest</span>
+                <div className='text-center'>
+                    <img src={logo} height="60px" width="60px" alt="VBI Music" />
+                    <h4>VBI Music</h4>
+                    <hr />
                 </div>
             </div>
         )

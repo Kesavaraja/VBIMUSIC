@@ -1,6 +1,7 @@
-App {
-  height: 100vh;
+.App {
+  background-color: #f4f4f4;
 }
+
 
 .card {
   max-width: 100%;
@@ -11,6 +12,10 @@ App {
 }
 
 .card-title:first-letter {
+  text-transform: capitalize;
+}
+
+.card-text:first-letter {
   text-transform: capitalize;
 }
 

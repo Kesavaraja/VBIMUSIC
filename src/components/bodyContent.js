@@ -19,7 +19,7 @@ class BodyContent extends React.Component {
             pageCount: 24,
             selectedAlbum: null,
             selectedSong: null,
-            userPlaylist: getLocalStorage("playlist") ? JSON.parse(getLocalStorage("playlist")) : setLocalStorage("playlist", JSON.stringify([{ id: "Favourites", name: "Favourites", songs: [] }])),
+            userPlaylist: getLocalStorage("playlist") ? JSON.parse(getLocalStorage("playlist")) : [],
             bgImage: _bgImage,
             albumList: null,
             songList: null,
@@ -44,6 +44,7 @@ class BodyContent extends React.Component {
         this.renderPlaylist = this.renderPlaylist.bind(this);
         this.updatePlaylistToParent = this.updatePlaylistToParent.bind(this);
         this.shuffleChoosenPlaylist = this.shuffleChoosenPlaylist.bind(this);
+        this.createNewPlaylist = this.createNewPlaylist.bind(this);
     }
 
     getAlbums() {
@@ -210,11 +211,12 @@ class BodyContent extends React.Component {
         return <SongCard song={songData} />
     }
 
-    createNewPlaylist() {
-        var existingPlaylist = this.state.userPlaylist
+    createNewPlaylist(playListName) {
+        console.log("userPlaylist:", playListName, this.state)
+        var existingPlaylist = isValidData(this.state.userPlaylist) ? this.state.userPlaylist : []
         var data = {
-            name: this.state.newPlaylistName,
-            id: this.state.newPlaylistName,
+            name: playListName,
+            id: playListName,
             songs: [],
             dateCreated: Date.parse(new Date())
         }
@@ -266,7 +268,7 @@ class BodyContent extends React.Component {
                                 <div className="input-group">
                                     <input type="text" className='form-control' placeholder='+ Create new playlist' value={this.state.newPlaylistName} onChange={this.setPlaylistName} name="newPlaylistName" />
                                     <span class="input-group-append">
-                                        <span className='btn btn-primary pull-right' onClick={() => this.createNewPlaylist()}>Create</span>
+                                        <span className='btn btn-primary pull-right' onClick={() => this.createNewPlaylist(this.state.newPlaylistName)}>Create</span>
                                     </span>
 
                                 </div>

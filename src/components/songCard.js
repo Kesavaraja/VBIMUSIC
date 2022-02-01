@@ -58,16 +58,22 @@ class SongCard extends React.Component {
                         <p className='card-text'>Album: <p className='card-text'>{song.albumName}</p></p>
 
                     </div>
-                    <div className="card-footer">
-                        <div className="dropdown">
-                            <a className="btn btn-secondary btn-circle dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" id={"dropdown" + song.id} data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                                + Add to playlist
-                            </a>
-                            <ul className="dropdown-menu" aria-labelledby={"dropdown" + song.id}>
-                                {this.props.playlists.map((item) => this.renderPlaylists(item, song))}
-                            </ul>
-                        </div>
-                    </div>
+                    {
+                        isValidData(this.props.playlists) ?
+                            <div className="card-footer">
+                                <div className="dropdown">
+                                    <a className="btn btn-secondary btn-circle dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" id={"dropdown" + song.id} data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                        + Add to playlist
+                                    </a>
+                                    <ul className="dropdown-menu" aria-labelledby={"dropdown" + song.id}>
+
+                                        {this.props.playlists.map((item) => this.renderPlaylists(item, song))}
+
+                                    </ul>
+                                </div>
+                            </div>
+                            : null
+                    }
                 </div >
             )
         }
